@@ -108,7 +108,9 @@ def man(command, arguments):
         "echo": "Prints the arguments of the command.\n" +
         "Usage: echo [expression...]",
         "man": "Prints information about a chosen command.\n" +
-        "Usage: man [command]"
+        "Usage: man [command]",
+        "history": "Prints the history of commands.\n" + 
+        "Usage: history"
         }
     if len(arguments) == 1:
         try:
@@ -130,6 +132,7 @@ def history(command, arguments):
     :arguments type: list.
     :returne: True.
     """
+    clean_arguments(arguments)
     if len(arguments) != 1:
         print "Error: history function should not receive any arguments!"
         return False
@@ -137,6 +140,35 @@ def history(command, arguments):
     for command in history_list:
         print command
     return True
+
+
+def remove_command_index(command_with_index):
+    """
+    Removes the index from a command in the history list.
+    :param command_with_index: the command with the index number.
+    :command_with_index type: str.
+    :returns: the command without the index.
+    """
+    return command_with_index[3:]
+
+
+def special_command(command, history_list):
+    """
+    Handles the event designators.
+    :param command: the command itself.
+    :command type: str.
+    :param history_list: the history list of the commands.
+    :history_list type: list of strings.
+    :returns: the correct command according to the history list.
+    """
+    if command == "!!":
+        return remove_command_index(history_list[-2])
+    if command.find("!-") == 0:
+        num = int(command[2:])
+        return remove_command_index(history_list[-1 * num - 1])
+    else:
+        num = int(command[1:])
+        return remove_command_index(history_list[num - 1])
 
 
 def python_shell():
@@ -166,6 +198,10 @@ def python_shell():
         command = splitted_command_line[0]
         arguments = splitted_command_line[1:]
         try:
+            if command.find("!") == 0:
+                command = special_command(command, history_list)
+                history_list.pop()
+                history_list.append(str(index) + ". " + command)
             if command == "history":
                 arguments.append(history_list)
             result = command_to_function[command](command, arguments)
