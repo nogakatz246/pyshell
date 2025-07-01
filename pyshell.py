@@ -23,22 +23,20 @@ def ls_no_flags(arguments):
     If no directory was specified, displays the current directory.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: None.
+    :returns: True if nothing went wrong.
     """
     if len(arguments) == 0:
-        list_of_files = os.listdir('.')
-        print os.getcwd() + ":"
-        for file_in_dir in list_of_files:
-            print(file_in_dir)
-    else:
-        for directory in arguments:
-            try:
-                print directory + ":"
-                list_of_files = os.listdir(directory)
-                for file_in_dir in list_of_files:
-                    print(file_in_dir)
-            except OSError:
-                print "Directory does not exist!"
+        arguments.append(".")
+    for directory in arguments:
+        try:
+            print directory + ":"
+            list_of_files = os.listdir(directory)
+            for file_in_dir in list_of_files:
+                print(file_in_dir)
+        except OSError:
+            print "Directory " + directory + " does not exist!"
+            return False
+    return True
 
 
 def change_dir(arguments):
@@ -46,15 +44,19 @@ def change_dir(arguments):
     Change the current working directory to a selected directory.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: None.
+    :returns: True if nothing went wrong.
     """
-    if len(arguments) != 1:
-        print "Error: the cd function should receive 1 argument, received " + str(len(arguments))
-    else:
-        try:
-            os.chdir(arguments[0])
-        except OSError:
-            print "Directory does not exist!"
+    if len(arguments) > 1:
+        print "Error: the cd function should receive a maximum of 1 argument, received " + str(len(arguments))
+        return
+    if len(arguments) == 0:
+        arguments.append(os.getenv('HOME'))
+    try:
+        os.chdir(arguments[0])
+    except OSError:
+        print "Directory " + arguments[0] + " does not exist!"
+        return False
+    return True
 
 
 def current_dir(arguments):
@@ -62,9 +64,10 @@ def current_dir(arguments):
     Prints the name of the current working directory.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: None.
+    :returns: True.
     """
     print os.getcwd()
+    return True
 
 
 def echo(arguments):
@@ -72,12 +75,10 @@ def echo(arguments):
     Prints the arguments received from the user.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: None.
+    :returns: True.
     """
-    to_echo = ""
-    for argument in arguments:
-        to_echo += argument + " "
-    print to_echo
+    print ' '.join(arguments)
+    return True
 
 
 def man(arguments):
@@ -85,7 +86,7 @@ def man(arguments):
     Prints information about a chosen command.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: None.
+    :returns: True if nothing went wrong..
     """
     manual = {
         "ls": "Prints the content of a chosen directory.\n" +
@@ -104,8 +105,10 @@ def man(arguments):
             print manual[arguments[0]]
         except KeyError:
             print "Man: " + arguments[0] + " does not exist."
+            return False
     else:
         print "Error: man should receive 1 argument, received " + str(len(arguments))
+        return True
 
 
 def python_shell():
@@ -121,18 +124,24 @@ def python_shell():
         "echo": echo,
         "man": man
         }
-
+    # a list to hold the history of bash commands
+    history_list = []
+    index = 0
     print "Welcome to the python shell!:)"
     while True:
         command_line = raw_input(os.getcwd() + "  > ")
         splitted_command_line = command_line.split(" ")
-        clean_arguments(splitted_command_line)
         command = splitted_command_line[0]
         arguments = splitted_command_line[1:]
         try:
-            command_to_function[command](arguments)
+            result = command_to_function[command](arguments)
+            if result == False:
+                print "command was not executed correctly."
         except KeyError:
-            print "Pyshell: " + command + " does not exist."
+            if command not in command_to_function.keys():
+                print "command " + command + " does not exist."
+            else:
+                print "Error while executing command: " + command
 
 
 def main():
