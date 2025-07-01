@@ -81,13 +81,49 @@ def echo(arguments):
     return True
 
 
+def man(arguments):
+    """
+    Prints information about a chosen command.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: None.
+    """
+    manual = {
+        "ls": "Prints the content of a chosen directory.\n" +
+        "Usage: ls [directory: default is current directory]",
+        "cd": "Changes the current working directory to a chosen directory.\n" +
+        "Usage: cd [directory]",
+        "pwd": "Prints the name of the current working directory.\n" +
+        "Usage: pwd",
+        "echo": "Prints the arguments of the command.\n" +
+        "Usage: echo [expression...]",
+        "man": "Prints information about a chosen command.\n" +
+        "Usage: man [command]"
+        }
+    if len(arguments) == 1:
+        try:
+            print manual[arguments[0]]
+        except KeyError:
+            print "Man: " + arguments[0] + " does not exist."
+            return False
+    else:
+        print "Error: man should receive 1 argument, received " + str(len(arguments))
+    return True
+
+
 def python_shell():
     """
     A linux shell implementation in Python2.
     :returns: None.
     """
     # a dictionary to hold all the shell commands and the matching python function.
-    command_to_function = {"ls": ls_no_flags, "cd": change_dir, "pwd": current_dir, "echo": echo}
+    command_to_function = {
+    "ls": ls_no_flags, 
+    "cd": change_dir, 
+    "pwd": current_dir, 
+    "echo": echo,
+    "man": man
+    }
 
     print "Welcome to the python shell!:)"
     while True:
@@ -98,7 +134,7 @@ def python_shell():
         try:
             result = command_to_function[command](arguments)
             if not result:
-                print "command " + command + " does not exist."
+                print "Error while executing command: " + command
         except KeyError:
             if command not in command_to_function.keys():
                 print "Pyshell: " + command + " does not exist."
