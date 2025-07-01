@@ -2,7 +2,7 @@
 A linux shell, written in Python2.
 """
 import os
-import shutil
+import shutil 
 import glob
 
 
@@ -34,9 +34,9 @@ def ls_no_flags(arguments):
             for file_in_dir in list_of_files:
                 print(file_in_dir)
         except OSError:
-            print "Directory " + directory + " does not exist!"
+            print "Directory does not exist!"
             return False
-    return True
+        return True
 
 
 def change_dir(arguments):
@@ -47,7 +47,7 @@ def change_dir(arguments):
     :returns: True if nothing went wrong.
     """
     if len(arguments) > 1:
-        print "Error: the cd function should receive a maximum of 1 argument, received " + str(len(arguments))
+        print "Error: the cd function should receive 1 argument, received " + str(len(arguments))
         return
     if len(arguments) == 0:
         arguments.append(os.getenv('HOME'))
@@ -75,40 +75,10 @@ def echo(arguments):
     Prints the arguments received from the user.
     :param arguments: the list of arguments.
     :arguments type: list.
-    :returns: True.
+    :returns: None.
     """
     print ' '.join(arguments)
     return True
-
-
-def man(arguments):
-    """
-    Prints information about a chosen command.
-    :param arguments: the list of arguments.
-    :arguments type: list.
-    :returns: True if nothing went wrong..
-    """
-    manual = {
-        "ls": "Prints the content of a chosen directory.\n" +
-        "Usage: ls [directory: default is current directory]",
-        "cd": "Changes the current working directory to a chosen directory.\n" +
-        "Usage: cd [directory]",
-        "pwd": "Prints the name of the current working directory.\n" +
-        "Usage: pwd",
-        "echo": "Prints the arguments of the command.\n" +
-        "Usage: echo [expression...]",
-        "man": "Prints information about a chosen command.\n" +
-        "Usage: man [command]"
-        }
-    if len(arguments) == 1:
-        try:
-            print manual[arguments[0]]
-        except KeyError:
-            print "Man: " + arguments[0] + " does not exist."
-            return False
-    else:
-        print "Error: man should receive 1 argument, received " + str(len(arguments))
-        return True
 
 
 def python_shell():
@@ -117,16 +87,8 @@ def python_shell():
     :returns: None.
     """
     # a dictionary to hold all the shell commands and the matching python function.
-    command_to_function = {
-        "ls": ls_no_flags,
-        "cd": change_dir,
-        "pwd": current_dir,
-        "echo": echo,
-        "man": man
-        }
-    # a list to hold the history of bash commands
-    history_list = []
-    index = 0
+    command_to_function = {"ls": ls_no_flags, "cd": change_dir, "pwd": current_dir, "echo": echo}
+
     print "Welcome to the python shell!:)"
     while True:
         command_line = raw_input(os.getcwd() + "  > ")
@@ -135,11 +97,11 @@ def python_shell():
         arguments = splitted_command_line[1:]
         try:
             result = command_to_function[command](arguments)
-            if result == False:
-                print "command was not executed correctly."
+            if not result:
+                print "command " + command + " does not exist."
         except KeyError:
             if command not in command_to_function.keys():
-                print "command " + command + " does not exist."
+                print "Pyshell: " + command + " does not exist."
             else:
                 print "Error while executing command: " + command
 
