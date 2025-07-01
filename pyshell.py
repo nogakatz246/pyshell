@@ -171,6 +171,42 @@ def special_command(command, history_list):
         return remove_command_index(history_list[num - 1])
 
 
+# TODO: finish this function
+def touch(command, arguments):
+    """
+    Changes the timestamp of a file, or creates a new one if it does not exist.
+    :param command: the command itself.
+    :command type: str.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    """
+    if len(arguments) == 0:
+        print "Error: touch should receive at lease 1 argument."
+        return False
+    for filename in arguments:
+        try:
+            os.mknod(filename)
+        except OSError:
+            with open(filename, "a") as file:
+                write(
+            fd = os.open(filename, os.O_WRONLY)
+            print fd
+            os.write(fd, "")
+            os.close(fd)
+    return True
+
+def cat(command, arguments):
+    """
+    Prints the content of a file / files.
+    """
+    if len(arguments) == 0:
+        print "Error: cat should receive at least 1 argument."
+        return False
+    #for filename in arguments:
+        
+    
+
+
 def python_shell():
     """
     A linux shell implementation in Python2.
@@ -184,6 +220,7 @@ def python_shell():
     "echo": echo,
     "man": man,
     "history": history,
+    "touch": touch
     }
     index = 1
 
