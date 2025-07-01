@@ -16,7 +16,7 @@ def clean_arguments(arguments):
     while '' in arguments:
         arguments.remove('')
 
-
+test
 def ls_no_flags(arguments):
     """
     Prints the content of a chosen directory.
