@@ -17,10 +17,12 @@ def clean_arguments(arguments):
         arguments.remove('')
 
 
-def ls_no_flags(arguments):
+def ls_no_flags(command, arguments):
     """
     Prints the content of a chosen directory.
     If no directory was specified, displays the current directory.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: True if nothing went wrong.
@@ -39,9 +41,11 @@ def ls_no_flags(arguments):
         return True
 
 
-def change_dir(arguments):
+def change_dir(command, arguments):
     """
     Change the current working directory to a selected directory.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: True if nothing went wrong.
@@ -59,9 +63,11 @@ def change_dir(arguments):
     return True
 
 
-def current_dir(arguments):
+def current_dir(command, arguments):
     """
     Prints the name of the current working directory.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: True.
@@ -70,9 +76,11 @@ def current_dir(arguments):
     return True
 
 
-def echo(arguments):
+def echo(command, arguments):
     """
     Prints the arguments received from the user.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: None.
@@ -81,9 +89,11 @@ def echo(arguments):
     return True
 
 
-def man(arguments):
+def man(command, arguments):
     """
     Prints information about a chosen command.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: None.
@@ -111,9 +121,11 @@ def man(arguments):
     return True
 
 
-def history(arguments):
+def history(command, arguments):
     """
     Prints the history of commands.
+    :param command: the command itself.
+    :command type: str.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returne: True.
@@ -139,7 +151,7 @@ def python_shell():
     "pwd": current_dir, 
     "echo": echo,
     "man": man,
-    "history": history
+    "history": history,
     }
     index = 1
 
@@ -156,7 +168,7 @@ def python_shell():
         try:
             if command == "history":
                 arguments.append(history_list)
-            result = command_to_function[command](arguments)
+            result = command_to_function[command](command, arguments)
             if not result:
                 print "Error while executing command: " + command
         except KeyError:
