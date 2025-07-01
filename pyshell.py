@@ -111,6 +111,22 @@ def man(arguments):
     return True
 
 
+def history(arguments):
+    """
+    Prints the history of commands.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returne: True.
+    """
+    if len(arguments) != 1:
+        print "Error: history function should not receive any arguments!"
+        return False
+    history_list = arguments[0]
+    for command in history_list:
+        print command
+    return True
+
+
 def python_shell():
     """
     A linux shell implementation in Python2.
@@ -122,16 +138,24 @@ def python_shell():
     "cd": change_dir, 
     "pwd": current_dir, 
     "echo": echo,
-    "man": man
+    "man": man,
+    "history": history
     }
+    index = 1
 
+    # a list to hold all the past commands
+    history_list = []
+    
     print "Welcome to the python shell!:)"
     while True:
         command_line = raw_input(os.getcwd() + "  > ")
+        history_list.append(str(index) + ". " + command_line)
         splitted_command_line = command_line.split(" ")
         command = splitted_command_line[0]
         arguments = splitted_command_line[1:]
         try:
+            if command == "history":
+                arguments.append(history_list)
             result = command_to_function[command](arguments)
             if not result:
                 print "Error while executing command: " + command
@@ -140,6 +164,7 @@ def python_shell():
                 print "Pyshell: " + command + " does not exist."
             else:
                 print "Error while executing command: " + command
+        index += 1
 
 
 def main():
