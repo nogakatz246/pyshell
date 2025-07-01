@@ -2,7 +2,7 @@
 A linux shell, written in Python2.
 """
 import os
-import shutil 
+import shutil
 import glob
 
 
@@ -80,13 +80,47 @@ def echo(arguments):
     print to_echo
 
 
+def man(arguments):
+    """
+    Prints information about a chosen command.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: None.
+    """
+    manual = {
+        "ls": "Prints the content of a chosen directory.\n" +
+        "Usage: ls [directory: default is current directory]",
+        "cd": "Changes the current working directory to a chosen directory.\n" +
+        "Usage: cd [directory]",
+        "pwd": "Prints the name of the current working directory.\n" +
+        "Usage: pwd",
+        "echo": "Prints the arguments of the command.\n" +
+        "Usage: echo [expression...]",
+        "man": "Prints information about a chosen command.\n" +
+        "Usage: man [command]"
+        }
+    if len(arguments) == 1:
+        try:
+            print manual[arguments[0]]
+        except KeyError:
+            print "Man: " + arguments[0] + " does not exist."
+    else:
+        print "Error: man should receive 1 argument, received " + str(len(arguments))
+
+
 def python_shell():
     """
     A linux shell implementation in Python2.
     :returns: None.
     """
     # a dictionary to hold all the shell commands and the matching python function.
-    command_to_function = {"ls": ls_no_flags, "cd": change_dir, "pwd": current_dir, "echo": echo}
+    command_to_function = {
+        "ls": ls_no_flags,
+        "cd": change_dir,
+        "pwd": current_dir,
+        "echo": echo,
+        "man": man
+        }
 
     print "Welcome to the python shell!:)"
     while True:
