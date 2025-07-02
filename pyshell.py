@@ -110,7 +110,9 @@ def man(command, arguments):
         "man": "Prints information about a chosen command.\n" +
         "Usage: man [command]",
         "history": "Prints the history of commands.\n" + 
-        "Usage: history"
+        "Usage: history",
+        "cat": "Prints a file or files.\n" + 
+        "Usage: cat [file...]"
         }
     if len(arguments) == 1:
         try:
@@ -171,7 +173,7 @@ def special_command(command, history_list):
         return remove_command_index(history_list[num - 1])
 
 
-# TODO: finish this function
+# TODO: finish this function, add changing the timestamp
 def touch(command, arguments):
     """
     Changes the timestamp of a file, or creates a new one if it does not exist.
@@ -187,10 +189,7 @@ def touch(command, arguments):
         try:
             os.mknod(filename)
         except OSError:
-            #with open(filename, "a") as file:
-                #write(
-            # fd = os.open(filename, os.O_WRONLY)
-            # print fd
+            fd = os.open(filename, os.O_WRONLY)
             os.write(fd, "")
             os.close(fd)
     return True
