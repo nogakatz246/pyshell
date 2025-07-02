@@ -187,25 +187,41 @@ def touch(command, arguments):
         try:
             os.mknod(filename)
         except OSError:
-            with open(filename, "a") as file:
-                write(
-            fd = os.open(filename, os.O_WRONLY)
-            print fd
+            #with open(filename, "a") as file:
+                #write(
+            # fd = os.open(filename, os.O_WRONLY)
+            # print fd
             os.write(fd, "")
             os.close(fd)
     return True
 
+
 def cat(command, arguments):
     """
     Prints the content of a file / files.
+    :param command: the command itself.
+    :command type: str.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: True if nothing went wrong.
     """
     if len(arguments) == 0:
         print "Error: cat should receive at least 1 argument."
         return False
-    #for filename in arguments:
+    for filename in arguments:
+        try:
+            fd = os.open(filename, os.O_RDONLY)
+            size_of_file = os.stat(filename).st_size
+            file_data = ""
+            for chunk in range(size_of_file):
+                file_data += os.read(fd, chunk)
+            print file_data
+            os.close(fd)
+        except OSError:
+            print "Error: file could not be printed."
+            return False
+    return True
         
-    
-
 
 def python_shell():
     """
@@ -220,7 +236,8 @@ def python_shell():
     "echo": echo,
     "man": man,
     "history": history,
-    "touch": touch
+    "touch": touch,
+    "cat": cat
     }
     index = 1
 
