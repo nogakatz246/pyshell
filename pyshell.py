@@ -6,17 +6,6 @@ import shutil
 import glob
 
 
-def clean_arguments(arguments):
-    """
-    Cleans the arguments list - deletes empty arguments ('').
-    :param arguments: the list of arguemtns.
-    :arguments type: list.
-    :returns: None.
-    """
-    while '' in arguments:
-        arguments.remove('')
-
-
 def ls_no_flags(arguments):
     """
     Prints the content of a chosen directory.
@@ -93,12 +82,14 @@ def python_shell():
     while True:
         command_line = raw_input(os.getcwd() + "  > ")
         splitted_command_line = command_line.split(" ")
-        command = splitted_command_line[0]
-        arguments = splitted_command_line[1:]
+        try:
+            command = splitted_command_line[0]
+            arguments = splitted_command_line[1:]
+        except IndexError:
+            print "Error: bad command."
+            continue
         try:
             result = command_to_function[command](arguments)
-            if not result:
-                print "Command " + command + " does not exist."
         except KeyError:
             if command not in command_to_function.keys():
                 print "Pyshell: " + command + " does not exist."
