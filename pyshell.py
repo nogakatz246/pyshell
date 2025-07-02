@@ -107,7 +107,7 @@ def python_shell():
     """
     # a dictionary to hold all the shell commands and the matching python function.
     command_to_function = {
-        "ls": ls_no_flags,
+        "ls": ls,
         "cd": change_dir,
         "pwd": current_dir,
         "echo": echo,
