@@ -75,8 +75,6 @@ def echo(manual, arguments):
     :arguments type: list.
     :returns: True.
     """
-    manual['echo'] = ("Prints the arguments of the command.\n" + 
-        "Usage: echo [expression...]")
     print ' '.join(arguments)
     return True
 
