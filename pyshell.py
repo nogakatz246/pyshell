@@ -113,6 +113,9 @@ def python_shell():
         "echo": echo,
         "man": man
         }
+    
+    # a dictionary to hold all the function definitions
+    manual = {}
 
     print "Welcome to the python shell!:)"
     while True:
@@ -127,7 +130,7 @@ def python_shell():
         if command not in command_to_function.keys():
             print "Pyshell: " + command + " does not exist."
         else:
-            result = command_to_function[command](arguments)
+            result = command_to_function[command](manual, arguments)
 
 
 def main():
