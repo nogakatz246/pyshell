@@ -5,6 +5,11 @@ import os
 import shutil
 import glob
 
+class Command:
+    def __init__(self, func, man):
+        self.func = func
+        self.man = man
+
 
 def ls(arguments):
     """
@@ -61,13 +66,17 @@ def current_dir(arguments):
     return True
 
 
-def echo(arguments):
+def echo(manual, arguments):
     """
     Prints the arguments received from the user.
+    :param manual: the manual of commands.
+    :manual type: dict.
     :param arguments: the list of arguments.
     :arguments type: list.
     :returns: True.
     """
+    manual['echo'] = ("Prints the arguments of the command.\n" + 
+        "Usage: echo [expression...]")
     print ' '.join(arguments)
     return True
 
@@ -79,53 +88,15 @@ def man(arguments):
     :arguments type: list.
     :returns: None.
     """
-    manual = {
-        "ls": "Prints the content of a chosen directory.\n" +
-        "Usage: ls [directory: default is current directory]",
-        "cd": "Changes the current working directory to a chosen directory.\n" +
-        "Usage: cd [directory]",
-        "pwd": "Prints the name of the current working directory.\n" +
-        "Usage: pwd",
-        "echo": "Prints the arguments of the command.\n" +
-        "Usage: echo [expression...]",
-        "man": "Prints information about a chosen command.\n" +
-        "Usage: man [command]"
-        }
-    if len(arguments) == 1:
-        try:
-            print manual[arguments[0]]
-        except KeyError:
-            print "Man: " + arguments[0] + " does not exist."
-    else:
+    if len(arguments) != 2:
         print "Error: man should receive 1 argument, received " + str(len(arguments))
-
-
-def man(arguments):
-    """
-    Prints information about a chosen command.
-    :param arguments: the list of arguments.
-    :arguments type: list.
-    :returns: None.
-    """
-    manual = {
-        "ls": "Prints the content of a chosen directory.\n" +
-        "Usage: ls [directory: default is current directory]",
-        "cd": "Changes the current working directory to a chosen directory.\n" +
-        "Usage: cd [directory]",
-        "pwd": "Prints the name of the current working directory.\n" +
-        "Usage: pwd",
-        "echo": "Prints the arguments of the command.\n" +
-        "Usage: echo [expression...]",
-        "man": "Prints information about a chosen command.\n" +
-        "Usage: man [command]"
-        }
-    if len(arguments) == 1:
-        try:
-            print manual[arguments[0]]
-        except KeyError:
-            print "Man: " + arguments[0] + " does not exist."
-    else:
-        print "Error: man should receive 1 argument, received " + str(len(arguments))
+        return False
+    command_to_function = arguments[-1]
+    try:
+        print command_to_function[arguments[0]].man
+    except KeyError:
+        print "Man: " + arguments[0] + " does not exist."
+    return True
 
 
 def python_shell():
@@ -135,16 +106,18 @@ def python_shell():
     """
     # a dictionary to hold all the shell commands and the matching python function.
     command_to_function = {
-        "ls": ls_no_flags,
-        "cd": change_dir,
-        "pwd": current_dir,
-        "echo": echo,
-        "man": man
+        "ls": Command(ls, ("Prints the content of a chosen directory.\n" +
+            "Usage: ls [directory: default is current directory]")),
+        "cd": Command(change_dir, ("Changes the current working directory to a chosen directory.\n" +
+            "Usage: cd [directory]")),
+        "pwd": Command(current_dir, ("Prints the name of the current working directory.\n" +
+            "Usage: pwd")),
+        "echo": Command(echo, ("Prints the arguments of the command.\n" +
+            "Usage: echo [expression...]")),
+        "man": Command(man, ("Prints information about a chosen command.\n" + 
+            "Usage: man [command]"))
         }
     
-    # a dictionary to hold all the function definitions
-    manual = {}
-
     print "Welcome to the python shell!:)"
     while True:
         command_line = raw_input(os.getcwd() + "  > ")
@@ -158,7 +131,9 @@ def python_shell():
         if command not in command_to_function.keys():
             print "Pyshell: " + command + " does not exist."
         else:
-            result = command_to_function[command](manual, arguments)
+            if command == "man":
+                arguments.append(command_to_function)
+            result = command_to_function[command].func(arguments)
 
 
 def main():
