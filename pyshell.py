@@ -14,6 +14,7 @@ def ls(arguments):
     :arguments type: list.
     :returns: True if nothing went wrong.
     """
+    ret_value = True
     if len(arguments) == 0:
         arguments.append(".")
     for directory in arguments:
@@ -25,8 +26,8 @@ def ls(arguments):
                 print file_in_dir
         except OSError:
             print "Directory " + directory + " does not exist!"
-            return False
-    return True
+            ret_value = False
+    return ret_value
 
 
 def change_dir(arguments):
