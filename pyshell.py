@@ -6,7 +6,7 @@ import shutil
 import glob
 
 
-def ls_no_flags(arguments):
+def ls(arguments):
     """
     Prints the content of a chosen directory.
     If no directory was specified, displays the current directory.
@@ -18,7 +18,8 @@ def ls_no_flags(arguments):
         arguments.append(".")
     for directory in arguments:
         try:
-            print directory + ":"
+            if len(arguments) > 1:
+                print directory + ":"
             list_of_files = os.listdir(directory)
             for file_in_dir in list_of_files:
                 print file_in_dir
@@ -37,7 +38,7 @@ def change_dir(arguments):
     """
     if len(arguments) > 1:
         print "Error: the cd function should receive 1 argument, received " + str(len(arguments))
-        return 
+        return False 
     if len(arguments) == 0:
         arguments.append(os.getenv('HOME'))
     try:
@@ -76,7 +77,12 @@ def python_shell():
     :returns: None.
     """
     # a dictionary to hold all the shell commands and the matching python function.
-    command_to_function = {"ls": ls_no_flags, "cd": change_dir, "pwd": current_dir, "echo": echo}
+    command_to_function = {
+        "ls": ls,
+        "cd": change_dir, 
+        "pwd": current_dir, 
+        "echo": echo
+        }
 
     print "Welcome to the python shell!:)"
     while True:
@@ -88,13 +94,10 @@ def python_shell():
         except IndexError:
             print "Error: bad command."
             continue
-        try:
+        if command not in command_to_function.keys():
+            print "Pyshell: " + command + " does not exist."
+        else:
             result = command_to_function[command](arguments)
-        except KeyError:
-            if command not in command_to_function.keys():
-                print "Pyshell: " + command + " does not exist."
-            else:
-                print "Error while executing command: " + command
 
 
 def main():
