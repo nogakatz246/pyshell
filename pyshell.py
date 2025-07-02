@@ -6,17 +6,6 @@ import shutil
 import glob
 
 
-def clean_arguments(arguments):
-    """
-    Cleans the arguments list - deletes empty arguments ('').
-    :param arguments: the list of arguemtns.
-    :arguments type: list.
-    :returns: None.
-    """
-    while '' in arguments:
-        arguments.remove('')
-
-
 def ls_no_flags(command, arguments):
     """
     Prints the content of a chosen directory.
@@ -134,7 +123,6 @@ def history(command, arguments):
     :arguments type: list.
     :returne: True.
     """
-    clean_arguments(arguments)
     if len(arguments) != 1:
         print "Error: history function should not receive any arguments!"
         return False
@@ -220,7 +208,71 @@ def cat(command, arguments):
             print "Error: file could not be printed."
             return False
     return True
-        
+
+
+def cp(command, arguments):
+    """
+    Copies a file to a different location.
+    :param command: the command itself.
+    :command type: str.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: True if nothing went wrong.
+    """
+    if len(arguments) != 2:
+        print "Error: cp chould receive 2 arguments, received " + str(len(arguments))
+        return False
+    try:
+        shutil.copyfile(arguments[0], arguments[1])
+    except shutil.Error:
+        print "Error: file was not copied."
+        return False
+    except IOError:
+        print "Error: file was not copied."
+        return False
+    return True
+
+
+def mv(command, arguments):
+    """
+    Moves a file from one location to another.
+    :param command: the command itself.
+    :command type: str.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: True if nothing went wrong.
+    """
+    if len(arguments) != 2:
+        print "Error: mv should receive 2 arguments, received " + len(arguments)
+        return False
+    try:
+        shutil.move(arguments[0], arguments[1])
+    except OSError:
+        print "Error: file does not exist."
+        return False
+    return True
+
+
+def mkdir(command, arguments):
+    """
+    Creates a new directory with the name received.
+    :param command: the command itself.
+    :command type: str.
+    :param arguments: the list of arguments.
+    :arguments type: list.
+    :returns: True if nothing went wrong.
+    """
+    if len(arguments) == 0:
+        print "Error: mkdir should receive at least 1 arguments."
+        return False
+    for dirname in arguments:
+        try:
+            os.mkdir(dirname)
+        except OSError:
+            print "Error: file already exists."
+            return False
+    return True
+
 
 def python_shell():
     """
@@ -236,7 +288,10 @@ def python_shell():
     "man": man,
     "history": history,
     "touch": touch,
-    "cat": cat
+    "cat": cat,
+    "cp": cp,
+    "mv": mv,
+    "mkdir": mkdir
     }
     index = 1
 
@@ -248,8 +303,11 @@ def python_shell():
         command_line = raw_input(os.getcwd() + "  > ")
         history_list.append(str(index) + ". " + command_line)
         splitted_command_line = command_line.split(" ")
-        command = splitted_command_line[0]
-        arguments = splitted_command_line[1:]
+        try:
+            command = splitted_command_line[0]
+            arguments = splitted_command_line[1:]
+        except IndexError:
+            print "Error: bad command."
         try:
             if command.find("!") == 0:
                 command = special_command(command, history_list)
